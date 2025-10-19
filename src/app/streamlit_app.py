@@ -188,7 +188,7 @@ def load_generation_data() -> pl.DataFrame:
     data_version_new = _load_data(query=data_version_query)["_id"][0]
     
     # Refresh data and cache if data version has changed
-    if data_version_cached != data_version_new:
+    if st.session_state.get("gen_df") is None or data_version_cached != data_version_new:
         gen_df = _load_data(query=data_query)
         log.debug("Loaded generation data from DB.")
         
@@ -215,7 +215,7 @@ def get_last_refresh_dt() -> str:
     )
     query = db_query_config.get("last_refresh_dt", query)
     last_run_df = _load_data(query=query)
-    last_refresh_dt = last_run_df["run_stop"][0]
+    last_refresh_dt = last_run_df["run_stop"][0] if not last_run_df.is_empty() else None
     log.debug(f"Last refresh: {last_refresh_dt}")
 
     return last_refresh_dt
