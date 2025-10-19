@@ -20,6 +20,9 @@ A background APScheduler job incrementally updates the dataset hourly.
 
 
 ## Architecture
+### Diagram
+![Flowchart](./harmony_energy_pipeline.svg)
+### Project Structure
 ```
 project/
 │
