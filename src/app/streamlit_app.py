@@ -9,6 +9,7 @@ import polars.selectors as cs
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from numpy import linspace
 
 from pathlib import Path
 from typing import Literal, Optional
@@ -463,11 +464,26 @@ with col2:
         margin=dict(l=40, r=40, t=50, b=40),
     )
 
-    # Set axis titles
-    # zcop_ci_chart.update_xaxes(title_text="Datetime")
+    # Set axes
     zcop_ci_chart.update_xaxes(title_text=None)
-    zcop_ci_chart.update_yaxes(title_text="ZCO %", secondary_y=False)
-    zcop_ci_chart.update_yaxes(title_text="Carbon Intensity (gCO₂/kWh)", secondary_y=True)
+
+    zcop_ci_chart.update_yaxes(
+        title_text="ZCO %", 
+        secondary_y=False,
+        showgrid=True,
+    )
+
+    # Set secondary y-axis (Carbon Intensity) aligned to primary y-axis
+    primary_range = zcop_ci_df.get_column(ZC_PERC_COL).min(), zcop_ci_df.get_column(ZC_PERC_COL).max()
+    secondary_range = zcop_ci_df.get_column(CI_COL).min(), zcop_ci_df.get_column(CI_COL).max()
+
+    zcop_ci_chart.update_yaxes(
+        title_text="Carbon Intensity (gCO₂/kWh)", 
+        secondary_y=True,
+        showgrid=False,
+        tickvals=linspace(secondary_range[0], secondary_range[1], num=6),  # align number of ticks
+        ticktext=[f"{v:.0f}" for v in linspace(secondary_range[0], secondary_range[1], num=6)],
+    )
 
     st.plotly_chart(zcop_ci_chart, use_container_width=True)
     log.debug("Chart (ZC% vs CI) displayed")
