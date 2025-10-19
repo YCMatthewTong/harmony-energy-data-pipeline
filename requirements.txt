@@ -1,0 +1,9 @@
+streamlit
+polars
+sqlalchemy
+requests
+backoff
+loguru
+apscheduler
+pytest
+plotly

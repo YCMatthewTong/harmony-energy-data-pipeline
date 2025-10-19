@@ -1,0 +1,38 @@
+{
+    "neso_api": {
+        "limit": 30000
+    },
+    "db": {
+        "path": "data/app.db",
+        "url": "sqlite:///data/app.db",
+        "query": {
+            "data_version": "SELECT MAX(_id) AS _id FROM generation;",
+            "generation_data": "SELECT * FROM generation ORDER BY DATETIME ASC;",
+            "last_refresh_dt": "SELECT run_stop FROM pipeline_run_history WHERE success=1 ORDER BY run_stop DESC LIMIT 1"
+        }
+    },
+    "app": {
+        "schdeule_interval": 60,
+        "intervals": ["30m", "1h", "1d", "1mo", "1y"],
+        "default_interval": "1y",
+        "viz": {
+            "fuel_cols": [
+                "NUCLEAR",
+                "BIOMASS",
+                "HYDRO",
+                "SOLAR",
+                "WIND_EMB",
+                "WIND",
+                "COAL",
+                "GAS",
+                "IMPORTS",
+                "STORAGE",
+                "OTHER"
+            ],
+            "datetime_col": "DATETIME",
+            "zero_carbon_col": "ZERO_CARBON",
+            "carbon_intensity_col": "CARBON_INTENSITY",
+            "generation_col": "GENERATION"
+        }
+    }
+}
