@@ -10,7 +10,12 @@ logger.remove()
 
 # Add console + file sinks
 FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{extra[step]}</cyan> | {message}"
-logger.add(sys.stdout, colorize=True, format=FORMAT)
+logger.add(
+    sys.stdout, 
+    level="INFO",
+    colorize=True,
+    format=FORMAT
+)
 logger.add(
     f"{LOG_DIR}/pipeline.log",
     retention="15 days",
