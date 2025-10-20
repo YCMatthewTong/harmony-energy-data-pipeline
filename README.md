@@ -32,7 +32,7 @@ project/
 │   ├── db/                # Database models and connection
 │   │   ├── client.py
 │   │   └── models.py
-│   ├── ingest/            # NESO API ingestion logic
+│   ├── ingest/            # NESO API ingestion logic 
 │   │   └── fetch_neso.py
 │   ├── transform/         # Data cleaning, validation, enrichment
 │   │   └── transform.py
@@ -157,20 +157,23 @@ project/
 
 
 ## Running the Project
+### Requirements
+- Python 3.11+
+
 
 ### Local
-To run and test the project locally, firstly setup a virtual environment. A helper script is provided:
-```bash
+To run and test the project locally, firstly setup a virtual environment with the required packages. A helper script is provided:
+```
 scripts/setup.sh
 ```
 To launch the app locally, run:
-```bash
+```
 scripts/run_local.sh
 ```
 
 ### On Streamlit Cloud
 Just push to GitHub — Streamlit Cloud will automatically run
-```bash
+```
 streamlit run src/app/streamlit_app.py
 ```
 The scheduler starts automatically when the app boots.
