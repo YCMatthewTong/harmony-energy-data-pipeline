@@ -22,7 +22,7 @@ from src.utils.logger import logger
 from src.utils.config import load_config
 
 log = logger.bind(step="streamlit")
-
+log.info("Streamlit app loading...")
 # Load config
 config = load_config(config_path="conf/config.json")
 db_config = config.get("db")
@@ -474,15 +474,15 @@ with col2:
     )
 
     # Set secondary y-axis (Carbon Intensity) aligned to primary y-axis
-    primary_range = zcop_ci_df.get_column(ZC_PERC_COL).min(), zcop_ci_df.get_column(ZC_PERC_COL).max()
-    secondary_range = zcop_ci_df.get_column(CI_COL).min(), zcop_ci_df.get_column(CI_COL).max()
+    # primary_range = zcop_ci_df.get_column(ZC_PERC_COL).min(), zcop_ci_df.get_column(ZC_PERC_COL).max()
+    # secondary_range = zcop_ci_df.get_column(CI_COL).min(), zcop_ci_df.get_column(CI_COL).max()
 
     zcop_ci_chart.update_yaxes(
         title_text="Carbon Intensity (gCO₂/kWh)", 
         secondary_y=True,
         showgrid=False,
-        tickvals=linspace(secondary_range[0], secondary_range[1], num=6),  # align number of ticks
-        ticktext=[f"{v:.0f}" for v in linspace(secondary_range[0], secondary_range[1], num=6)],
+        # tickvals=linspace(secondary_range[0], secondary_range[1], num=6),  # align number of ticks
+        # ticktext=[f"{v:.0f}" for v in linspace(secondary_range[0], secondary_range[1], num=6)],
     )
 
     st.plotly_chart(zcop_ci_chart, use_container_width=True)
@@ -492,3 +492,5 @@ with col2:
 
 st.markdown("---")
 st.caption("Created for Harmony Energy tech test.")
+
+log.info("Streamlit app loaded.")
