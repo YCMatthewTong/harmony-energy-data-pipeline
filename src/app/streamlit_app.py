@@ -9,13 +9,14 @@ import polars.selectors as cs
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from numpy import linspace
+from sqlalchemy import select, desc, asc, func
 
 from pathlib import Path
 from typing import Literal, Optional
 from datetime import timedelta
 
 from src.db.client import DatabaseClient
+from src.db.models import PipelineRunHistory, Generation
 from src.pipeline.run import run_pipeline
 from src.scheduler.job import start_scheduler
 from src.utils.logger import logger
@@ -41,7 +42,7 @@ st.set_page_config(
     layout="wide",
 )
 
-
+# TODO: Move helper functions into a module
 # --- Helper functions ---
 
 def _load_data(query: str) -> pl.DataFrame:
@@ -181,13 +182,17 @@ def load_generation_data() -> pl.DataFrame:
     Loads generation data from the database or cache.
     Update cache if data is changed.
     """
-    data_query = db_query_config.get("generation_data", "SELECT * FROM generation ORDER BY DATETIME ASC;")
-    data_version_query = db_query_config.get("data_version", "SELECT MAX(_id) AS _id FROM generation;")
+    data_query = select(Generation).order_by(asc(Generation.DATETIME))
+    data_version_query = select(func.max(Generation._id))                                          
 
-    data_version_cached = st.session_state.get("data_version")
     # Get latest MAX _id value
-    data_version_new = _load_data(query=data_version_query)["_id"][0]
+    data_version_query_results = _load_data(query=data_version_query)
+    data_version_new = data_version_query_results[:, 0][0] if not data_version_query_results.is_empty() else 0
     
+    # Load from cache
+    gen_df = st.session_state.get("gen_df")
+    data_version_cached = st.session_state.get("data_version")
+
     # Refresh data and cache if data version has changed
     if st.session_state.get("gen_df") is None or data_version_cached != data_version_new:
         gen_df = _load_data(query=data_query)
@@ -198,23 +203,25 @@ def load_generation_data() -> pl.DataFrame:
         
         # Store data version
         st.session_state["data_version"] = data_version_new
-        log.debug("Cached generation data.")        
+        log.debug("Cached generation data.")
+    else:
+        log.debug("Loaded cached generation data.")
         
-    return st.session_state["gen_df"]
+    return gen_df
 
 
 def get_last_refresh_dt() -> str:
     """
     Retrieves the timestamp of the last successful pipeline run from the database.
     """
+    # Create a SQLAlchemy Selectable
     query = (
-        f'SELECT run_stop '
-        f'FROM pipeline_run_history '
-        f'WHERE success=1 '
-        f'ORDER BY run_stop DESC '
-        f'LIMIT 1 '
+        select(PipelineRunHistory.run_stop)
+        .where(PipelineRunHistory.success == True)
+        .order_by(desc(PipelineRunHistory.run_stop))
+        .limit(1)
     )
-    query = db_query_config.get("last_refresh_dt", query)
+    # Query DB table
     last_run_df = _load_data(query=query)
     last_refresh_dt = last_run_df["run_stop"][0] if not last_run_df.is_empty() else None
     log.debug(f"Last refresh: {last_refresh_dt}")
@@ -260,8 +267,6 @@ if df.is_empty():
     st.warning("No data found in database.")
     st.stop()
 
-df = parse_date(df)
-# set_global_date_range(df)
 col1, col2, col3 = st.columns([2, 1, 1], vertical_alignment="center")
 
 with col1:

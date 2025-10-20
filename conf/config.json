@@ -4,12 +4,7 @@
     },
     "db": {
         "path": "data/app.db",
-        "url": "sqlite:///data/app.db",
-        "query": {
-            "data_version": "SELECT MAX(_id) AS _id FROM generation;",
-            "generation_data": "SELECT * FROM generation ORDER BY DATETIME ASC;",
-            "last_refresh_dt": "SELECT run_stop FROM pipeline_run_history WHERE success=1 ORDER BY run_stop DESC LIMIT 1"
-        }
+        "url": "sqlite:///data/app.db"
     },
     "app": {
         "schdeule_interval": 60,
