@@ -26,40 +26,53 @@ A background APScheduler job incrementally updates the dataset hourly.
 ```
 project/
 │
-├── src/
-│   ├── app/               # Streamlit frontend
-│   │   └── streamlit_app.py
-│   ├── db/                # Database models and connection
-│   │   ├── client.py
-│   │   └── models.py
-│   ├── ingest/            # NESO API ingestion logic 
-│   │   └── fetch_neso.py
-│   ├── transform/         # Data cleaning, validation, enrichment
-│   │   └── transform.py
-│   ├── serve/             # Data loading for visualisation
-│   │   ├── load.py        # Load data into database
-│   │   └── run_history.py # Wrapper for tracking pipeline run
-│   ├── scheduler/         # Background APScheduler setup
-│   │   └── job.py
-│   ├── utils/             # Shared config, logging utilities
-│   │   ├── config.py
-│   │   └── logger.py
-│   └── pipeline/          # Orchestration (pipeline definition)
-│       └── run.py
-│
-├── data/
-│   └── app.db             # SQLite database storing processed data
-│
 ├── conf/
-│   └── config.json         # Central configuration (paths, schedule interval, etc.)
-│
-├── tests/
-│   └── test_db_load.py     # Unit tests for DB loading
+│   └── config.json          # Central configuration (paths, schedule interval, etc.)
 │
 ├── scripts/
-│   └── run_local.sh         # Helper for local app development
+│   ├── setup.sh             # Install dependencies and set up environment
+│   └── run_local.sh         # Launch Streamlit app locally
 │
+├── src/
+│   ├── app/                 # Streamlit frontend
+│   │   ├── components/      # Modular UI and chart rendering
+│   │   │   ├── charts.py
+│   │   │   └── selectors.py
+│   │   ├── utils/           # Frontend-only helpers and data access
+│   │   │   ├── data_loader.py
+│   │   │   └── helpers.py
+│   │   └── streamlit_app.py # Main Streamlit app entrypoint
+│   │
+│   ├── db/                  # Database models and connection utilities
+│   │   ├── client.py
+│   │   └── models.py
+│   │
+│   ├── ingest/              # NESO API ingestion logic
+│   │   └── fetch_neso.py
+│   │
+│   ├── transform/           # Data cleaning, validation, enrichment
+│   │   └── transform.py
+│   │
+│   ├── serve/               # Data loading for visualization and run tracking
+│   │   ├── load.py
+│   │   └── run_history.py
+│   │
+│   ├── scheduler/           # Background scheduling (APScheduler)
+│   │   └── job.py
+│   │
+│   ├── pipeline/            # ETL orchestration and pipeline definition
+│   │   └── run.py
+│   │
+│   └── utils/               # Shared configuration and logging utilities
+│       ├── config.py
+│       └── logger.py
+│
+├── tests/                   # Unit and integration tests
+│   └── test_db_load.py
+│
+├── README.md
 └── requirements.txt
+
 ```
 
 
@@ -156,7 +169,7 @@ project/
 
 
 
-## Running the Project
+## Installation
 ### Requirements
 - Python 3.11+
 
@@ -171,7 +184,7 @@ To launch the app locally, run:
 scripts/run_local.sh
 ```
 
-### On Streamlit Cloud
+### Streamlit Cloud
 Just push to GitHub — Streamlit Cloud will automatically run
 ```
 streamlit run src/app/streamlit_app.py
