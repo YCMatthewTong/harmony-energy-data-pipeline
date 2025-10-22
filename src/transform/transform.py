@@ -197,7 +197,7 @@ def _validate_missing_values(df: pl.DataFrame) -> pl.DataFrame:
         # Drop null _id's & timestamps
         df = df.drop_nulls(subset=["_id", "DATETIME"])
         # Fill null numerics with 0.0
-        df = df.with_columns(cs.numeric().fill_null(0.0))
+        df = df.with_columns(cs.float().fill_null(0.0))
         log.info(f"Removed {df.height - before} rows with missing _id or DATETIME.")
 
     return df, null_row_count
@@ -211,7 +211,7 @@ def _deduplicate(df: pl.DataFrame) -> tuple[pl.DataFrame, int]:
     # Drop duplicated _id's - prefer latest timestamp
     df = df.sort("DATETIME").unique(subset=["_id"], keep="last")
     # Drop duplicated timestamps - prefer latest _id
-    df = df.sort("_id").unique("DATETIME", keep="last")
+    df = df.sort("_id").unique("DATETIME", keep="last", maintain_order=True)
 
     # Count removed rows
     removed = before - df.height
