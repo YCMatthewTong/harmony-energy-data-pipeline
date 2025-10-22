@@ -12,13 +12,13 @@ from src.db.models import PipelineRunHistory, Generation
 
 log = logger.bind(step="st-helpers")
 
-# @st.cache_resource
-def start_background_scheduler(db_client: DatabaseClient, interval: int = 60, job_id: str = "pipeline_job"):
+@st.cache_resource()
+def start_background_scheduler(_db_client: DatabaseClient, interval: int = 60, job_id: str = "pipeline_job"):
     """Start background scheduler once per session."""
     if "scheduler" not in st.session_state:
         scheduler = start_scheduler(
             run_pipeline, 
-            kwargs={"db_client": db_client,}, 
+            kwargs={"db_client": _db_client,}, 
             interval_minutes=interval, 
             id=job_id,
         )

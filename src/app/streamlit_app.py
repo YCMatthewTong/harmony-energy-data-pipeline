@@ -53,7 +53,7 @@ DBClient.init_db()
 
 # --- Background Pipeline Scheduler --- 
 # Initialize scheduler for the session
-scheduler = start_background_scheduler(db_client=DBClient, interval=SCHEDULE_INTERVAL, job_id="pipeline_job")
+scheduler = start_background_scheduler(_db_client=DBClient, interval=SCHEDULE_INTERVAL, job_id="pipeline_job")
 log.info(f"Next schedueled run: {scheduler.get_job('pipeline_job').next_run_time.astimezone(timezone.utc).isoformat()}")
 
 # --------------------------
